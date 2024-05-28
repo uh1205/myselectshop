@@ -30,13 +30,20 @@ public class ProductController {
 
     @GetMapping("/products")
     public Page<ProductResponseDto> getProducts(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam("page") int page, // client 에서 페이지가 1 이면 server 에서는 0
+            @RequestParam("page") int page,
             @RequestParam("size") int size,
             @RequestParam("sortBy") String sortBy,
-            @RequestParam("isAsc") boolean isAsc) {
-
+            @RequestParam("isAsc") boolean isAsc,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return productService.getProducts(userDetails.getUser(), page - 1, size, sortBy, isAsc);
+        // client 에서 페이지가 1 이면 server 에서는 0
+    }
+
+    @PostMapping("/products/{productId}/folder")
+    public void addFolders(@PathVariable Long productId,
+                           @RequestParam Long folderId,
+                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        productService.addFolders(productId, folderId, userDetails.getUser());
     }
 
 }
