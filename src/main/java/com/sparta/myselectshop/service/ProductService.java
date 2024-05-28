@@ -29,6 +29,7 @@ public class ProductService {
         return new ProductResponseDto(product);
     }
 
+    @Transactional(readOnly = true)
     public Page<ProductResponseDto> getProducts(User user, int page, int size, String sortBy, boolean isAsc) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
@@ -60,8 +61,9 @@ public class ProductService {
 
     @Transactional
     public void updateBySearch(Long id, ItemDto itemDto) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        Product product = productRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("Product not found")
+        );
         product.updateByItemDto(itemDto);
     }
 
