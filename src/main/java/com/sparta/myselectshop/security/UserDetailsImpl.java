@@ -1,7 +1,8 @@
 package com.sparta.myselectshop.security;
 
 import com.sparta.myselectshop.entity.User;
-import com.sparta.myselectshop.entity.UserRoleEnum;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public record UserDetailsImpl(User user) implements UserDetails {
+@Getter
+@RequiredArgsConstructor
+public class UserDetailsImpl implements UserDetails {
+
+    private final User user;
 
     @Override
     public String getPassword() {
@@ -23,14 +28,13 @@ public record UserDetailsImpl(User user) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        UserRoleEnum role = user.getRole();
-        String authority = role.getAuthority();
+        String authority = user.getRole().getAuthority();
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
         Collection<GrantedAuthority> authorities = new ArrayList<>();
+
         authorities.add(simpleGrantedAuthority);
 
         return authorities;
     }
-
 }

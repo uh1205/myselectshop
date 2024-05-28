@@ -4,6 +4,7 @@ import com.sparta.myselectshop.dto.ProductMypriceRequestDto;
 import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
 import com.sparta.myselectshop.entity.Product;
+import com.sparta.myselectshop.entity.User;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,9 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductResponseDto createProduct(ProductRequestDto requestDto) {
-        return new ProductResponseDto(productRepository.save(new Product(requestDto)));
+    public ProductResponseDto createProduct(ProductRequestDto requestDto, User user) {
+        Product product = productRepository.save(new Product(requestDto, user));
+        return new ProductResponseDto(product);
     }
 
     @Transactional
@@ -38,16 +40,27 @@ public class ProductService {
         return new ProductResponseDto(product);
     }
 
-    public List<ProductResponseDto> getAllProducts() {
-        return productRepository.findAll().stream()
-                .map(ProductResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
     @Transactional
     public void updateBySearch(Long id, ItemDto itemDto) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         product.updateByItemDto(itemDto);
     }
+
+    public List<ProductResponseDto> getProducts(User user) {
+        List<Product> productList = productRepository.findAllByUser(user);
+
+        return productList.stream()
+                .map(ProductResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponseDto> getAllProducts() {
+        List<Product> productList = productRepository.findAll();
+
+        return productList.stream()
+                .map(ProductResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
 }

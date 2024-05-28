@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain chain, Authentication authResult) {
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).user().getRole();
+        UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
         String token = jwtUtil.createToken(username, role);
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);

@@ -21,8 +21,8 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api")
 @Slf4j
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
@@ -57,8 +57,8 @@ public class UserController {
     @GetMapping("/user-info")
     @ResponseBody
     public UserInfoDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String username = userDetails.user().getUsername();
-        UserRoleEnum role = userDetails.user().getRole();
+        String username = userDetails.getUser().getUsername();
+        UserRoleEnum role = userDetails.getUser().getRole();
 
         boolean isAdmin = (role == UserRoleEnum.ADMIN);
 
