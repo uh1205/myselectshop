@@ -15,8 +15,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j(topic = "NAVER API")
 @Service
+@Slf4j(topic = "NAVER API")
 public class NaverApiService {
 
     private final RestTemplate restTemplate;
@@ -35,7 +35,7 @@ public class NaverApiService {
                 .encode()
                 .build()
                 .toUri();
-        log.info("uri = " + uri);
+        log.info("uri = {}", uri);
 
         RequestEntity<Void> requestEntity = RequestEntity
                 .get(uri)
@@ -45,7 +45,7 @@ public class NaverApiService {
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
 
-        log.info("NAVER API Status Code : " + responseEntity.getStatusCode());
+        log.info("NAVER API Status Code : {}", responseEntity.getStatusCode());
 
         return fromJSONtoItems(responseEntity.getBody());
     }
