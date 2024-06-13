@@ -1,15 +1,14 @@
 package com.sparta.myselectshop.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
-@Table(name = "users")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
@@ -27,12 +26,21 @@ public class User {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private UserRoleEnum role;
+    private UserRole role;
 
-    public User(String username, String password, String email, UserRoleEnum role) {
+    private Long kakaoId;
+
+    @Builder
+    public User(String username, String password, String email, UserRole role, Long kakaoId) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
+        this.kakaoId = kakaoId;
     }
+
+    public void updateKakaoId(Long kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+
 }

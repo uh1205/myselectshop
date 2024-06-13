@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ProductService {
 
     public static final int MIN_MY_PRICE = 100;
@@ -26,17 +27,18 @@ public class ProductService {
     private final FolderRepository folderRepository;
     private final ProductFolderRepository productFolderRepository;
 
+
+    @Transactional
     public ProductResponseDto createProduct(ProductRequestDto requestDto, User user) {
         Product product = productRepository.save(new Product(requestDto, user));
         return new ProductResponseDto(product);
     }
 
-    @Transactional(readOnly = true)
     public Page<ProductResponseDto> getProducts(User user, int page, int size, String sortBy, boolean isAsc) {
         Pageable pageable = getPageable(page, size, sortBy, isAsc);
 
         Page<Product> products;
-        if (user.getRole() == UserRoleEnum.ADMIN) {
+        if (user.getRole() == UserRole.ADMIN) {
             products = productRepository.findAll(pageable);
         } else {
             products = productRepository.findAllByUser(user, pageable);
@@ -68,12 +70,10 @@ public class ProductService {
 
     public void addFolders(Long productId, Long folderId, User user) {
         Product product = productRepository.findById(productId).orElseThrow(() ->
-                new NullPointerException("Product not found")
-        );
+                new NullPointerException("Product not found"));
 
         Folder folder = folderRepository.findById(folderId).orElseThrow(
-                () -> new NullPointerException("Folder not found")
-        );
+                () -> new NullPointerException("Folder not found"));
 
         if (!product.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException("You are not the owner of this product");

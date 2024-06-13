@@ -3,7 +3,7 @@ package com.sparta.myselectshop.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.myselectshop.dto.SignupRequestDto;
 import com.sparta.myselectshop.dto.UserInfoDto;
-import com.sparta.myselectshop.entity.UserRoleEnum;
+import com.sparta.myselectshop.entity.UserRole;
 import com.sparta.myselectshop.jwt.JwtUtil;
 import com.sparta.myselectshop.security.UserDetailsImpl;
 import com.sparta.myselectshop.service.FolderService;
@@ -64,9 +64,9 @@ public class UserController {
     @ResponseBody
     public UserInfoDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String username = userDetails.getUser().getUsername();
-        UserRoleEnum role = userDetails.getUser().getRole();
+        UserRole role = userDetails.getUser().getRole();
 
-        boolean isAdmin = (role == UserRoleEnum.ADMIN);
+        boolean isAdmin = (role == UserRole.ADMIN);
 
         return new UserInfoDto(username, isAdmin);
     }
@@ -82,7 +82,7 @@ public class UserController {
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         String token = kakaoService.kakaoLogin(code);
 
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token); // cookie name, cookie value
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7)); // cookie name, cookie value
         cookie.setPath("/");
         response.addCookie(cookie);
 

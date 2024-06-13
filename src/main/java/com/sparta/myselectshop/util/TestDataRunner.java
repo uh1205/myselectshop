@@ -2,7 +2,7 @@
 //
 //import com.sparta.myselectshop.entity.Product;
 //import com.sparta.myselectshop.entity.User;
-//import com.sparta.myselectshop.entity.UserRoleEnum;
+//import com.sparta.myselectshop.entity.UserRole;
 //import com.sparta.myselectshop.naver.dto.ItemDto;
 //import com.sparta.myselectshop.naver.service.NaverApiService;
 //import com.sparta.myselectshop.repository.ProductRepository;
@@ -30,7 +30,13 @@
 //    @Override
 //    public void run(ApplicationArguments args) {
 //        // 테스트 User 생성
-//        User testUser = new User("Robbie", passwordEncoder.encode("1234"), "robbie@sparta.com", UserRoleEnum.USER);
+//        User testUser = User.builder()
+//                .username("Robbie")
+//                .password(passwordEncoder.encode("1234"))
+//                .email("robbie@sparta.com")
+//                .role(UserRole.USER)
+//                .build();
+//
 //        testUser = userRepository.save(testUser);
 //
 //        // 테스트 User 의 관심상품 등록
