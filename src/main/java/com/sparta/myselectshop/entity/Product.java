@@ -1,7 +1,7 @@
 package com.sparta.myselectshop.entity;
 
-import com.sparta.myselectshop.dto.ProductMypriceRequestDto;
-import com.sparta.myselectshop.dto.ProductRequestDto;
+import com.sparta.myselectshop.dto.ProductMyPriceRequest;
+import com.sparta.myselectshop.dto.ProductRequest;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public class Product extends Timestamped {
     @OneToMany(mappedBy = "product")
     private List<ProductFolder> productFolderList = new ArrayList<>();
 
-    public Product(ProductRequestDto requestDto, User user) {
+    public Product(ProductRequest requestDto, User user) {
         this.title = requestDto.getTitle();
         this.image = requestDto.getImage();
         this.link = requestDto.getLink();
@@ -52,8 +52,8 @@ public class Product extends Timestamped {
         this.user = user;
     }
 
-    public void update(ProductMypriceRequestDto requestDto) {
-        this.myprice = requestDto.getMyprice();
+    public void update(ProductMyPriceRequest requestDto) {
+        this.myprice = requestDto.getMyPrice();
     }
 
     public void updateByItemDto(ItemDto itemDto) {

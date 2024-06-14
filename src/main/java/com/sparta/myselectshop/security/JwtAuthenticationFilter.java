@@ -1,7 +1,7 @@
 package com.sparta.myselectshop.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.myselectshop.dto.LoginRequestDto;
+import com.sparta.myselectshop.dto.LoginRequest;
 import com.sparta.myselectshop.entity.UserRole;
 import com.sparta.myselectshop.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -28,8 +28,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            LoginRequestDto requestDto = new ObjectMapper().readValue(
-                    request.getInputStream(), LoginRequestDto.class
+            LoginRequest requestDto = new ObjectMapper().readValue(
+                    request.getInputStream(), LoginRequest.class
             );
 
             return getAuthenticationManager().authenticate(

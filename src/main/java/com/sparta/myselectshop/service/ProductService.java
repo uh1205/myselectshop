@@ -1,8 +1,8 @@
 package com.sparta.myselectshop.service;
 
-import com.sparta.myselectshop.dto.ProductMypriceRequestDto;
-import com.sparta.myselectshop.dto.ProductRequestDto;
-import com.sparta.myselectshop.dto.ProductResponseDto;
+import com.sparta.myselectshop.dto.ProductMyPriceRequest;
+import com.sparta.myselectshop.dto.ProductRequest;
+import com.sparta.myselectshop.dto.ProductResponse;
 import com.sparta.myselectshop.entity.*;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.repository.FolderRepository;
@@ -24,17 +24,16 @@ public class ProductService {
     public static final int MIN_MY_PRICE = 100;
 
     private final ProductRepository productRepository;
-    private final FolderRepository folderRepository;
     private final ProductFolderRepository productFolderRepository;
-
+    private final FolderRepository folderRepository;
 
     @Transactional
-    public ProductResponseDto createProduct(ProductRequestDto requestDto, User user) {
+    public ProductResponse createProduct(ProductRequest requestDto, User user) {
         Product product = productRepository.save(new Product(requestDto, user));
-        return new ProductResponseDto(product);
+        return new ProductResponse(product);
     }
 
-    public Page<ProductResponseDto> getProducts(User user, int page, int size, String sortBy, boolean isAsc) {
+    public Page<ProductResponse> getProducts(User user, int page, int size, String sortBy, boolean isAsc) {
         Pageable pageable = getPageable(page, size, sortBy, isAsc);
 
         Page<Product> products;
@@ -44,20 +43,22 @@ public class ProductService {
             products = productRepository.findAllByUser(user, pageable);
         }
 
-        return products.map(ProductResponseDto::new);
+        return products.map(ProductResponse::new);
     }
 
     @Transactional
-    public ProductResponseDto updateProduct(Long id, ProductMypriceRequestDto requestDto) {
-        if (requestDto.getMyprice() < MIN_MY_PRICE) {
-            throw new IllegalArgumentException("MY PRICE should be greater than " + MIN_MY_PRICE);
+    public ProductResponse updateProduct(Long id, ProductMyPriceRequest request) {
+        // 최소 관심 가격보다 낮은 가격으로 설정하는 경우
+        if (request.getMyPrice() < MIN_MY_PRICE) {
+            throw new IllegalArgumentException("유효하지 않은 관심 가격입니다. 최소 " + MIN_MY_PRICE + "원 이상으로 설정해 주세요.");
         }
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-        product.update(requestDto);
+        Product product = productRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
 
-        return new ProductResponseDto(product);
+        product.update(request);
+
+        return new ProductResponse(product);
     }
 
     @Transactional
@@ -90,11 +91,11 @@ public class ProductService {
         productFolderRepository.save(new ProductFolder(product, folder));
     }
 
-    public Page<ProductResponseDto> getProductsInFolder(Long folderId, int page, int size, String sortBy, boolean isAsc, User user) {
+    public Page<ProductResponse> getProductsInFolder(Long folderId, int page, int size, String sortBy, boolean isAsc, User user) {
         Pageable pageable = getPageable(page, size, sortBy, isAsc);
 
         return productRepository.findAllByUserAndProductFolderList_FolderId(user, folderId, pageable)
-                .map(ProductResponseDto::new);
+                .map(ProductResponse::new);
     }
 
     private static PageRequest getPageable(int page, int size, String sortBy, boolean isAsc) {

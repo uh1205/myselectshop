@@ -1,6 +1,6 @@
 package com.sparta.myselectshop.service;
 
-import com.sparta.myselectshop.dto.SignupRequestDto;
+import com.sparta.myselectshop.dto.SignupRequest;
 import com.sparta.myselectshop.entity.User;
 import com.sparta.myselectshop.entity.UserRole;
 import com.sparta.myselectshop.repository.UserRepository;
@@ -22,7 +22,7 @@ public class UserService {
     /**
      * 회원가입
      */
-    public void signup(SignupRequestDto request) {
+    public void signup(SignupRequest request) {
         String username = request.getUsername();
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");

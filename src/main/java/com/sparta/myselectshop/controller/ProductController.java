@@ -1,8 +1,8 @@
 package com.sparta.myselectshop.controller;
 
-import com.sparta.myselectshop.dto.ProductMypriceRequestDto;
-import com.sparta.myselectshop.dto.ProductRequestDto;
-import com.sparta.myselectshop.dto.ProductResponseDto;
+import com.sparta.myselectshop.dto.ProductMyPriceRequest;
+import com.sparta.myselectshop.dto.ProductRequest;
+import com.sparta.myselectshop.dto.ProductResponse;
 import com.sparta.myselectshop.security.UserDetailsImpl;
 import com.sparta.myselectshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +18,23 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping("/products")
-    public ProductResponseDto createProduct(
-            @RequestBody ProductRequestDto requestDto,
+    public ProductResponse createProduct(
+            @RequestBody ProductRequest requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return productService.createProduct(requestDto, userDetails.getUser());
     }
 
     @PutMapping("/products/{id}")
-    public ProductResponseDto updateProduct(
+    public ProductResponse updateProduct(
             @PathVariable Long id,
-            @RequestBody ProductMypriceRequestDto requestDto
+            @RequestBody ProductMyPriceRequest requestDto
     ) {
         return productService.updateProduct(id, requestDto);
     }
 
     @GetMapping("/products")
-    public Page<ProductResponseDto> getProducts(
+    public Page<ProductResponse> getProducts(
             @RequestParam("page") int page,
             @RequestParam("size") int size,
             @RequestParam("sortBy") String sortBy,
@@ -54,7 +54,7 @@ public class ProductController {
     }
 
     @GetMapping("/folders/{folderId}/products")
-    public Page<ProductResponseDto> getProductsInFolder(
+    public Page<ProductResponse> getProductsInFolder(
             @PathVariable Long folderId,
             @RequestParam("page") int page,
             @RequestParam("size") int size,

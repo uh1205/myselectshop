@@ -5,7 +5,8 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class FolderRequestDto {
+public class FolderRequest {
 
     List<String> folderNames;
+
 }

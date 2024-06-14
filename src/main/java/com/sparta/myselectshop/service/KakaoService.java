@@ -3,7 +3,7 @@ package com.sparta.myselectshop.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.myselectshop.dto.KakaoUserInfoDto;
+import com.sparta.myselectshop.dto.KakaoUserInfo;
 import com.sparta.myselectshop.entity.User;
 import com.sparta.myselectshop.entity.UserRole;
 import com.sparta.myselectshop.jwt.JwtUtil;
@@ -41,7 +41,7 @@ public class KakaoService {
         String accessToken = getToken(code);
 
         // 2. 토큰으로 카카오 API 호출: "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
-        KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
+        KakaoUserInfo kakaoUserInfo = getKakaoUserInfo(accessToken);
 
         // 3. 필요 시 신규 회원가입
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
@@ -96,7 +96,7 @@ public class KakaoService {
     /**
      * 액세스 토큰으로 카카오 사용자 정보 가져오기
      */
-    private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+    private KakaoUserInfo getKakaoUserInfo(String accessToken) throws JsonProcessingException {
         log.info("액세스 토큰 : {}", accessToken);
 
         // 요청 URI 만들기
@@ -134,13 +134,13 @@ public class KakaoService {
 
         log.info("카카오 사용자 정보 : id = {}, nickname = {}, email = {}", id, nickname, email);
 
-        return new KakaoUserInfoDto(id, nickname, email);
+        return new KakaoUserInfo(id, nickname, email);
     }
 
     /**
      * 필요 시 신규 회원가입
      */
-    private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
+    private User registerKakaoUserIfNeeded(KakaoUserInfo kakaoUserInfo) {
         Long kakaoId = kakaoUserInfo.getId();
         User kakaoUser = userRepository.findByKakaoId(kakaoId).orElse(null);
 

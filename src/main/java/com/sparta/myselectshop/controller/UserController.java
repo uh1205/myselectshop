@@ -1,8 +1,9 @@
 package com.sparta.myselectshop.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sparta.myselectshop.dto.SignupRequestDto;
-import com.sparta.myselectshop.dto.UserInfoDto;
+import com.sparta.myselectshop.dto.SignupRequest;
+import com.sparta.myselectshop.dto.UserInfo;
+import com.sparta.myselectshop.entity.User;
 import com.sparta.myselectshop.entity.UserRole;
 import com.sparta.myselectshop.jwt.JwtUtil;
 import com.sparta.myselectshop.security.UserDetailsImpl;
@@ -44,7 +45,7 @@ public class UserController {
     }
 
     @PostMapping("/user/signup")
-    public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+    public String signup(@Valid SignupRequest requestDto, BindingResult bindingResult) {
         // Validation 예외처리
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
 
@@ -62,13 +63,13 @@ public class UserController {
     // 회원 관련 정보 받기
     @GetMapping("/user-info")
     @ResponseBody
-    public UserInfoDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String username = userDetails.getUser().getUsername();
-        UserRole role = userDetails.getUser().getRole();
+    public UserInfo getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
 
-        boolean isAdmin = (role == UserRole.ADMIN);
-
-        return new UserInfoDto(username, isAdmin);
+        return new UserInfo(
+                user.getUsername(),
+                user.getRole().equals(UserRole.ADMIN)
+        );
     }
 
     @GetMapping("/user-folder")
@@ -82,7 +83,10 @@ public class UserController {
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         String token = kakaoService.kakaoLogin(code);
 
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7)); // cookie name, cookie value
+        Cookie cookie = new Cookie(
+                JwtUtil.AUTHORIZATION_HEADER, // cookie name
+                token.substring(7) // cookie value
+        );
         cookie.setPath("/");
         response.addCookie(cookie);
 
