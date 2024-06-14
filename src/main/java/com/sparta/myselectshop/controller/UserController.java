@@ -22,8 +22,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -44,25 +42,28 @@ public class UserController {
         return "signup";
     }
 
+    /**
+     * 회원가입
+     */
     @PostMapping("/user/signup")
-    public String signup(@Valid SignupRequest requestDto, BindingResult bindingResult) {
-        // Validation 예외처리
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-
-        if (!fieldErrors.isEmpty()) {
+    public String signup(
+            @Valid SignupRequest requestDto,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
             for (FieldError fieldError : bindingResult.getFieldErrors()) {
                 log.error("{} 필드 : {}", fieldError.getField(), fieldError.getDefaultMessage());
             }
             return "redirect:/api/user/signup";
         }
+
         userService.signup(requestDto);
 
         return "redirect:/api/user/login-page";
     }
 
-    // 회원 관련 정보 받기
-    @GetMapping("/user-info")
     @ResponseBody
+    @GetMapping("/user-info")
     public UserInfo getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
 

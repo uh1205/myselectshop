@@ -1,13 +1,13 @@
 package com.sparta.myselectshop.dto;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Getter
-@RequiredArgsConstructor
+@Data
+@AllArgsConstructor
 public class UserInfo {
 
-    private final String username;
-    private final boolean isAdmin;
+    private String username;
+    private boolean isAdmin;
 
 }

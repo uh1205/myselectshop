@@ -4,18 +4,17 @@ import com.sparta.myselectshop.dto.ProductMyPriceRequest;
 import com.sparta.myselectshop.dto.ProductRequest;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity // JPA가 관리할 수 있는 Entity 클래스 지정
+@Entity
 @Getter
-@Setter
-@Table(name = "product") // 매핑할 테이블의 이름을 지정
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends Timestamped {
 
     @Id
@@ -42,21 +41,32 @@ public class Product extends Timestamped {
     private User user;
 
     @OneToMany(mappedBy = "product")
-    private List<ProductFolder> productFolderList = new ArrayList<>();
+    private final List<ProductFolder> productFolderList = new ArrayList<>();
 
-    public Product(ProductRequest requestDto, User user) {
-        this.title = requestDto.getTitle();
-        this.image = requestDto.getImage();
-        this.link = requestDto.getLink();
-        this.lprice = requestDto.getLprice();
+    public Product(ProductRequest request, User user) {
+        this.title = request.getTitle();
+        this.image = request.getImage();
+        this.link = request.getLink();
+        this.lprice = request.getLprice();
         this.user = user;
     }
 
-    public void update(ProductMyPriceRequest requestDto) {
-        this.myprice = requestDto.getMyPrice();
+    @Builder
+    public Product(String title, String image, String link, int lprice, int myprice, User user) {
+        this.title = title;
+        this.image = image;
+        this.link = link;
+        this.lprice = lprice;
+        this.myprice = myprice;
+        this.user = user;
+    }
+
+    public void update(ProductMyPriceRequest request) {
+        this.myprice = request.getMyprice();
     }
 
     public void updateByItemDto(ItemDto itemDto) {
         this.lprice = itemDto.getLprice();
     }
+
 }

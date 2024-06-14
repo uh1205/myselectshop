@@ -37,16 +37,13 @@ class ProductServiceIntegrationTest {
         String imageUrl = "https://shopping-phinf.pstatic.net/main_1862208/18622086330.20200831140839.jpg";
         String linkUrl = "https://search.shopping.naver.com/gate.nhn?id=18622086330";
         int lPrice = 173900;
-        ProductRequest requestDto = new ProductRequest(
-                title,
-                imageUrl,
-                linkUrl,
-                lPrice
-        );
+
+        ProductRequest request = new ProductRequest(title, imageUrl, linkUrl, lPrice);
+
         user = userRepository.findById(1L).orElse(null);
 
         // when
-        ProductResponse product = productService.createProduct(requestDto, user);
+        ProductResponse product = productService.createProduct(request, user);
 
         // then
         assertNotNull(product.getId());
@@ -54,7 +51,7 @@ class ProductServiceIntegrationTest {
         assertEquals(imageUrl, product.getImage());
         assertEquals(linkUrl, product.getLink());
         assertEquals(lPrice, product.getLprice());
-        assertEquals(0, product.getMyPrice());
+        assertEquals(0, product.getMyprice());
         createdProduct = product;
     }
 
@@ -64,9 +61,9 @@ class ProductServiceIntegrationTest {
     void test2() {
         // given
         Long productId = this.createdProduct.getId();
-        int myPrice = 173000;
+        int myprice = 173000;
         ProductMyPriceRequest requestDto = new ProductMyPriceRequest();
-        requestDto.setMyPrice(myPrice);
+        requestDto.setMyprice(myprice);
 
         // when
         ProductResponse product = productService.updateProduct(productId, requestDto);
@@ -77,8 +74,8 @@ class ProductServiceIntegrationTest {
         assertEquals(this.createdProduct.getImage(), product.getImage());
         assertEquals(this.createdProduct.getLink(), product.getLink());
         assertEquals(this.createdProduct.getLprice(), product.getLprice());
-        assertEquals(myPrice, product.getMyPrice());
-        this.updatedMyPrice = myPrice;
+        assertEquals(myprice, product.getMyprice());
+        this.updatedMyPrice = myprice;
     }
 
     @Test
@@ -107,7 +104,7 @@ class ProductServiceIntegrationTest {
         assertEquals(this.createdProduct.getLprice(), foundProduct.getLprice());
 
         // 3. Order(2) 테스트에 의해 myPrice 가격이 정상적으로 업데이트되었는지 검증
-        assertEquals(this.updatedMyPrice, foundProduct.getMyPrice());
+        assertEquals(this.updatedMyPrice, foundProduct.getMyprice());
     }
 
 }

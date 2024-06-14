@@ -1,10 +1,10 @@
 package com.sparta.myselectshop.dto;
 
-import lombok.Getter;
+import lombok.Data;
 
 import java.util.List;
 
-@Getter
+@Data
 public class FolderRequest {
 
     List<String> folderNames;

@@ -16,6 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.data.domain.Sort.Direction.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -28,28 +30,24 @@ public class ProductService {
     private final FolderRepository folderRepository;
 
     @Transactional
-    public ProductResponse createProduct(ProductRequest requestDto, User user) {
-        Product product = productRepository.save(new Product(requestDto, user));
+    public ProductResponse createProduct(ProductRequest request, User user) {
+        Product product = productRepository.save(new Product(request, user));
         return new ProductResponse(product);
     }
 
     public Page<ProductResponse> getProducts(User user, int page, int size, String sortBy, boolean isAsc) {
         Pageable pageable = getPageable(page, size, sortBy, isAsc);
-
-        Page<Product> products;
-        if (user.getRole() == UserRole.ADMIN) {
-            products = productRepository.findAll(pageable);
+        if (user.getRole().equals(UserRole.ADMIN)) {
+            return productRepository.findAll(pageable).map(ProductResponse::new);
         } else {
-            products = productRepository.findAllByUser(user, pageable);
+            return productRepository.findAllByUser(user, pageable).map(ProductResponse::new);
         }
-
-        return products.map(ProductResponse::new);
     }
 
     @Transactional
     public ProductResponse updateProduct(Long id, ProductMyPriceRequest request) {
         // 최소 관심 가격보다 낮은 가격으로 설정하는 경우
-        if (request.getMyPrice() < MIN_MY_PRICE) {
+        if (request.getMyprice() < MIN_MY_PRICE) {
             throw new IllegalArgumentException("유효하지 않은 관심 가격입니다. 최소 " + MIN_MY_PRICE + "원 이상으로 설정해 주세요.");
         }
 
@@ -57,15 +55,14 @@ public class ProductService {
                 new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
 
         product.update(request);
-
         return new ProductResponse(product);
     }
 
     @Transactional
     public void updateBySearch(Long id, ItemDto itemDto) {
         Product product = productRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("Product not found")
-        );
+                new IllegalArgumentException("Product not found"));
+
         product.updateByItemDto(itemDto);
     }
 
@@ -73,8 +70,8 @@ public class ProductService {
         Product product = productRepository.findById(productId).orElseThrow(() ->
                 new NullPointerException("Product not found"));
 
-        Folder folder = folderRepository.findById(folderId).orElseThrow(
-                () -> new NullPointerException("Folder not found"));
+        Folder folder = folderRepository.findById(folderId).orElseThrow(() ->
+                new NullPointerException("Folder not found"));
 
         if (!product.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException("You are not the owner of this product");
@@ -99,9 +96,7 @@ public class ProductService {
     }
 
     private static PageRequest getPageable(int page, int size, String sortBy, boolean isAsc) {
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy);
-
+        Sort sort = Sort.by(isAsc ? ASC : DESC, sortBy);
         return PageRequest.of(page, size, sort);
     }
 

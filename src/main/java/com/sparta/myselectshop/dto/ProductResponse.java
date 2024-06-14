@@ -1,20 +1,22 @@
 package com.sparta.myselectshop.dto;
 
 import com.sparta.myselectshop.entity.Product;
-import lombok.Getter;
+import com.sparta.myselectshop.entity.ProductFolder;
+import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Getter
+@Data
 public class ProductResponse {
 
-    private final Long id;
-    private final String title;
-    private final String link;
-    private final String image;
-    private final int lprice;
-    private final int myPrice;
-    private final List<FolderResponse> productFolderList;
+    private Long id;
+    private String title;
+    private String link;
+    private String image;
+    private int lprice;
+    private int myprice;
+    private List<FolderResponse> productFolderList = new ArrayList<>();
 
     public ProductResponse(Product product) {
         this.id = product.getId();
@@ -22,10 +24,10 @@ public class ProductResponse {
         this.link = product.getLink();
         this.image = product.getImage();
         this.lprice = product.getLprice();
-        this.myPrice = product.getMyprice();
-        this.productFolderList = product.getProductFolderList().stream()
-                .map(productFolder -> new FolderResponse(productFolder.getFolder()))
-                .toList();
+        this.myprice = product.getMyprice();
+        for (ProductFolder productFolder : product.getProductFolderList()) {
+            productFolderList.add(new FolderResponse(productFolder.getFolder()));
+        }
     }
 
 }

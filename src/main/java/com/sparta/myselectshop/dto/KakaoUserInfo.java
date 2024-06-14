@@ -1,18 +1,14 @@
 package com.sparta.myselectshop.dto;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Getter
+@Data
+@AllArgsConstructor
 public class KakaoUserInfo {
 
-    private final Long id;
-    private final String nickname;
-    private final String email;
-
-    public KakaoUserInfo(Long id, String nickname, String email) {
-        this.id = id;
-        this.nickname = nickname;
-        this.email = email;
-    }
+    private Long id;
+    private String nickname;
+    private String email;
 
 }

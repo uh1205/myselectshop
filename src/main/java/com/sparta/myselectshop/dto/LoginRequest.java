@@ -1,8 +1,8 @@
 package com.sparta.myselectshop.dto;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class LoginRequest {
 
     private String username;

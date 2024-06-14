@@ -1,12 +1,10 @@
 package com.sparta.myselectshop.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class ProductMyPriceRequest {
 
-    private int myPrice;
+    private int myprice;
 
 }

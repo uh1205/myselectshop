@@ -36,10 +36,10 @@ class ProductServiceTest {
     @DisplayName("관심 상품 희망가 - 최저가 이상으로 변경")
     void updateProductTest() {
         // given
-        int myPrice = ProductService.MIN_MY_PRICE + 3_000_000;
+        int myprice = ProductService.MIN_MY_PRICE + 3_000_000;
 
         ProductMyPriceRequest productMyPriceRequest = new ProductMyPriceRequest();
-        productMyPriceRequest.setMyPrice(myPrice);
+        productMyPriceRequest.setMyprice(myprice);
 
         ProductRequest productRequest = new ProductRequest(
                 "Apple <b>맥북</b> <b>프로</b> 16형 2021년 <b>M1</b> Max 10코어 실버 (MK1H3KH/A) ",
@@ -59,7 +59,7 @@ class ProductServiceTest {
         ProductResponse result = productService.updateProduct(productId, productMyPriceRequest);
 
         // then
-        assertEquals(myPrice, result.getMyPrice());
+        assertEquals(myprice, result.getMyprice());
     }
 
     @Test
@@ -70,7 +70,7 @@ class ProductServiceTest {
         int myPrice = ProductService.MIN_MY_PRICE - 50;
 
         ProductMyPriceRequest requestMyPriceDto = new ProductMyPriceRequest();
-        requestMyPriceDto.setMyPrice(myPrice);
+        requestMyPriceDto.setMyprice(myPrice);
 
         ProductService productService = new ProductService(productRepository, productFolderRepository, folderRepository);
 

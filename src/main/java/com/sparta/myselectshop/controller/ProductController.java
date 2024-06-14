@@ -3,6 +3,9 @@ package com.sparta.myselectshop.controller;
 import com.sparta.myselectshop.dto.ProductMyPriceRequest;
 import com.sparta.myselectshop.dto.ProductRequest;
 import com.sparta.myselectshop.dto.ProductResponse;
+import com.sparta.myselectshop.entity.ApiUseTime;
+import com.sparta.myselectshop.entity.User;
+import com.sparta.myselectshop.repository.ApiUseTimeRepository;
 import com.sparta.myselectshop.security.UserDetailsImpl;
 import com.sparta.myselectshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -16,21 +19,49 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
     private final ProductService productService;
+    private final ApiUseTimeRepository apiUseTimeRepository;
 
     @PostMapping("/products")
     public ProductResponse createProduct(
-            @RequestBody ProductRequest requestDto,
+            @RequestBody ProductRequest request,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return productService.createProduct(requestDto, userDetails.getUser());
+        long startTime = System.currentTimeMillis();
+
+        try {
+            // 응답 보내기
+            return productService.createProduct(request, userDetails.getUser());
+        }
+        finally {
+            long endTime = System.currentTimeMillis();
+            long runTime = endTime - startTime;
+
+            User user = userDetails.getUser();
+
+            // API 사용시간 및 DB 에 기록
+            ApiUseTime apiUseTime = apiUseTimeRepository.findByUser(user).orElse(null);
+
+            // 로그인 회원의 기록이 없으면
+            if (apiUseTime == null) {
+                apiUseTime = new ApiUseTime(user, runTime);
+            }
+            // 로그인 회원의 기록이 이미 있으면
+            else {
+                apiUseTime.addUseTime(runTime);
+            }
+
+            System.out.println("[API Use Time] Username: " + user.getUsername() + ", Total Time: " + apiUseTime.getTotalTime() + " ms");
+
+            apiUseTimeRepository.save(apiUseTime);
+        }
     }
 
     @PutMapping("/products/{id}")
     public ProductResponse updateProduct(
             @PathVariable Long id,
-            @RequestBody ProductMyPriceRequest requestDto
+            @RequestBody ProductMyPriceRequest request
     ) {
-        return productService.updateProduct(id, requestDto);
+        return productService.updateProduct(id, request);
     }
 
     @GetMapping("/products")

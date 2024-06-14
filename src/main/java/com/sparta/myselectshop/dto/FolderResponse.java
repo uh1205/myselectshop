@@ -1,13 +1,13 @@
 package com.sparta.myselectshop.dto;
 
 import com.sparta.myselectshop.entity.Folder;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class FolderResponse {
 
-    private final Long id;
-    private final String name;
+    private Long id;
+    private String name;
 
     public FolderResponse(Folder folder) {
         this.id = folder.getId();

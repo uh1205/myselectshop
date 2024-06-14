@@ -3,9 +3,9 @@ package com.sparta.myselectshop.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class SignupRequest {
 
     @NotBlank
@@ -14,8 +14,8 @@ public class SignupRequest {
     @NotBlank
     private String password;
 
-    @NotBlank
     @Email
+    @NotBlank
     private String email;
 
     @NotNull
